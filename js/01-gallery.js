@@ -1,14 +1,12 @@
 import { galleryItems } from './gallery-items.js';
 // Change code below this line
 
-// console.log(galleryItems);
-
-const paletteContainer = document.querySelector(".gallery");
+const imagesContainer = document.querySelector(".gallery");
 const cardsMarkap = createImageCardsMarkup(galleryItems);
+let modalWindow;
 
-paletteContainer.insertAdjacentHTML("beforeend", cardsMarkap);
-
-paletteContainer.addEventListener("click", onPaletteContainerClick);
+imagesContainer.insertAdjacentHTML("beforeend", cardsMarkap);
+imagesContainer.addEventListener("click", onImagesContainerClick);
 
 function createImageCardsMarkup(galleryItems) {
   return galleryItems.map(({preview, original, description}) => {
@@ -25,11 +23,27 @@ function createImageCardsMarkup(galleryItems) {
   }).join(``);
 }
 
-function onPaletteContainerClick(e) {
+function onImagesContainerClick(e) {
+e.preventDefault();
 const isImageEl = e.target.classList.contains("gallery__image");
   if (!isImageEl) {
     return;
   }
-  console.log(e.target.dataset.source);
-}
 
+    const instance = basicLightbox.create(`
+    <div class="modal">
+        <img src = "${e.target.dataset.source}" width="800" height="600">
+    </div>
+`);
+    instance.show();
+
+    window.addEventListener('keydown', onEskKeyPress);
+    function onEskKeyPress(e) {
+        const ESK_KEY_CODE = 'Escape';
+    
+        if (e.code === ESK_KEY_CODE) {
+             window.removeEventListener("keydown", onEskKeyPress);
+          instance.close();
+        }
+    }
+}
